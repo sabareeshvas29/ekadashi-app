@@ -29,6 +29,9 @@ class EkadashiUpdate(BaseModel):
 async def create_ekadashi(payload: EkadashiIn):
     db = get_supabase()
 
+    if not payload.reference_items:
+        raise HTTPException(status_code=400, detail="Reference items cannot be empty")
+
     ek_result = db.table("ekadashi").insert({
         "title": payload.title,
         "date": str(payload.date),
@@ -39,7 +42,7 @@ async def create_ekadashi(payload: EkadashiIn):
     ekadashi_id = ek_result.data[0]["id"]
 
     items = [
-        {**item.dict(), "ekadashi_id": ekadashi_id}
+        {**item.model_dump(), "ekadashi_id": ekadashi_id}
         for item in payload.reference_items
     ]
     db.table("reference_items").insert(items).execute()
@@ -96,17 +99,17 @@ async def get_signups(ekadashi_id: str):
     ]
 
 
-
-
-
-
-
 @router.patch("/{ekadashi_id}")
 async def upd_ek(ekadashi_id: str, payload: EkadashiUpdate):
     db = get_supabase()
 
     updates = {k: v for k, v in payload.model_dump().items() if v is not None}
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
     result = db.table("ekadashi").update(updates).eq("id", ekadashi_id).execute()
+    if not result.data:
+        raise HTTPException(status_code=404, detail="Ekadashi not found")
     return result.data[0]
     
 

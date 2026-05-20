@@ -29,6 +29,9 @@ async def to_register(payload: RegistrationIn):
         "phone": payload.phone,
         "comments": payload.comments,
     }).execute()
+    
+    if not reg_res.data:
+        raise HTTPException(status_code=500, detail="Failed to create registration")
 
     reg_id = reg_res.data[0]["id"]
 
