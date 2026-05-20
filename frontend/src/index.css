@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --saffron:    #D4680A;
+  --saffron-lt: #F5E6D0;
+  --saffron-dk: #9E4C07;
+  --cream:      #FBF7F0;
+  --cream-dk:   #F0E8D8;
+  --charcoal:   #2C2416;
+  --muted:      #7A6850;
+  --border:     #E0D0B8;
+  --white:      #FFFFFF;
+  --success:    #2D7A4F;
+  --error:      #C0392B;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 1px 3px rgba(44,36,22,0.08);
+  --shadow-md: 0 4px 16px rgba(44,36,22,0.10);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--charcoal);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.2; }
+h1 { font-size: 2.4rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.3rem; }
+
+.page { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+.page-wide { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--saffron); color: white; }
+.btn-primary:hover { background: var(--saffron-dk); }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--cream-dk); }
+.btn-sm { padding: 0.35rem 0.8rem; font-size: 0.82rem; }
+.btn-danger { background: var(--error); color: white; }
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  background: var(--white);
+  color: var(--charcoal);
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--saffron); }
+
+label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--muted); margin-bottom: 0.3rem; }
+.field { margin-bottom: 1rem; }
+
+.topnav {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.topnav-brand { font-family: var(--font-display); font-size: 1.3rem; color: var(--saffron); text-decoration: none; }
+
+.text-muted { color: var(--muted); font-size: 0.88rem; }
+.text-center { text-align: center; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: 0.5rem; }
+.loading { display: flex; align-items: center; justify-content: center; height: 60vh; color: var(--muted); font-family: var(--font-display); font-size: 1.2rem; }
+
+.badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+.badge-open { background: #E8F4EF; color: var(--success); }
+.badge-closed { background: var(--cream-dk); color: var(--muted); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+.schedule-section { margin-bottom: 1.5rem; }
+.schedule-section-title { font-family: var(--font-display); font-size: 1.15rem; color: var(--saffron-dk); padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); margin-bottom: 0.6rem; }
+.schedule-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-size: 0.92rem; border-bottom: 1px solid var(--cream-dk); }
+.schedule-person { font-weight: 500; }
+.schedule-detail { color: var(--muted); }
