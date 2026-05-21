@@ -15,11 +15,17 @@ class AssignmentsIn(BaseModel):
 async def assignSlot(payload: AssignmentsIn):
     db = get_supabase()
 
+    slot = payload.slot_detail
+    if not slot:
+        ref = db.table("reference_items").select("title").eq("id", payload.reference_item_id).single().execute()
+        if ref.data:
+            slot = ref.data["title"]
+
     asn_result = db.table("assignments").insert({
         "ekadashi_id": payload.ekadashi_id,
         "reference_item_id": payload.reference_item_id,
         "registration_id": payload.registration_id,
-        "slot_detail": payload.slot_detail,
+        "slot_detail": slot,
     }).execute()
 
     if not asn_result.data:

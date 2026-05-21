@@ -86,10 +86,12 @@ async def get_signups(ekadashi_id: str):
         if ref_id not in signup_map:
             signup_map[ref_id] = []
         reg = row["registrations"]
+        if not reg:
+            continue
         signup_map[ref_id].append({
             "registration_id": row["registration_id"],
             "name": f"{reg['first_name']} {reg['last_name']}"
-    })
+        })
         
     items = db.table("reference_items").select("*").eq("ekadashi_id", ekadashi_id).order("order_index").execute()
 
@@ -97,6 +99,14 @@ async def get_signups(ekadashi_id: str):
         {**item, "signups": signup_map.get(item["id"], [])}
         for item in items.data
     ]
+
+@router.delete("/{ekadashi_id}")
+async def delete_ekadashi(ekadashi_id: str):
+    db = get_supabase()
+    result = db.table("ekadashi").delete().eq("id", ekadashi_id).execute()
+    if not result.data:
+        raise HTTPException(status_code=404, detail="Ekadashi not found")
+    return {"success": True}
 
 
 @router.patch("/{ekadashi_id}")
