@@ -7,6 +7,7 @@ export default function RegisterPage() {
   const { ekadashiId } = useParams()
   const [form, setForm] = useState({ first_name: '', last_name: '', phone: '', comments: '' })
   const [selections, setSelections] = useState({})
+  const [songRequests, setSongRequests] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
@@ -16,10 +17,11 @@ export default function RegisterPage() {
   })
 
   const toggleItem = (itemId) => {
-    setSelections(prev => ({
-      ...prev,
-      [itemId]: !prev[itemId]
-    }))
+    setSelections(prev => {
+      const next = { ...prev, [itemId]: !prev[itemId] }
+      if (!next[itemId]) setSongRequests(r => { const c = { ...r }; delete c[itemId]; return c })
+      return next
+    })
   }
 
   const submit = async () => {
@@ -33,7 +35,7 @@ export default function RegisterPage() {
       .map(([id]) => id)
 
     try {
-      await api.post('/registrations/', { ekadashi_id: ekadashiId, ...form, reference_item_ids })
+      await api.post('/registrations/', { ekadashi_id: ekadashiId, ...form, reference_item_ids, song_requests: songRequests })
       setSubmitted(true)
     } catch (e) {
       setError(e.response?.data?.detail || 'Something went wrong. Please try again.')
@@ -51,7 +53,7 @@ export default function RegisterPage() {
 
   if (submitted) return (
     <div className="page text-center" style={{ paddingTop: '4rem' }}>
-      <h1>🙏 Thank you!</h1>
+      <h1> Thank you!</h1>
       <p className="text-muted mt-2">Your registration has been received. We look forward to the Bhajane.</p>
     </div>
   )
@@ -59,7 +61,7 @@ export default function RegisterPage() {
   return (
     <div className="page" style={{ maxWidth: '640px' }}>
       <div className="text-center mt-2" style={{ marginBottom: '2rem' }}>
-        <h1>॥ Hari Om ॥</h1>
+        <h1>॥ Hare Sreenivasa॥</h1>
         <h2 style={{ marginTop: '0.5rem' }}>{ekadashi.title}</h2>
         <p className="text-muted mt-1">
           {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
@@ -91,17 +93,24 @@ export default function RegisterPage() {
           Select everything you know and are comfortable performing.
         </p>
         {ekadashi.reference_items?.map(item => (
-          <div key={item.id} style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '0.6rem 0', borderBottom: '1px solid var(--border)'
-          }}>
-            <span style={{ fontSize: '0.92rem' }}>{item.title}</span>
-            <button
-              className={`btn btn-sm ${selections[item.id] ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => toggleItem(item.id)}
-            >
-              {selections[item.id] ? '✓ Familiar' : 'Familiar'}
-            </button>
+          <div key={item.id} style={{ padding: '0.6rem 0', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.92rem' }}>{item.title}</span>
+              <button
+                className={`btn btn-sm ${selections[item.id] ? 'btn-primary' : 'btn-ghost'}`}
+                onClick={() => toggleItem(item.id)}
+              >
+                {selections[item.id] ? '✓ Familiar' : 'Familiar'}
+              </button>
+            </div>
+            {item.is_song_request && selections[item.id] && (
+              <input
+                style={{ marginTop: '0.4rem', width: '100%', fontSize: '0.85rem' }}
+                placeholder="Which song? (optional)"
+                value={songRequests[item.id] || ''}
+                onChange={e => setSongRequests(prev => ({ ...prev, [item.id]: e.target.value }))}
+              />
+            )}
           </div>
         ))}
       </div>
