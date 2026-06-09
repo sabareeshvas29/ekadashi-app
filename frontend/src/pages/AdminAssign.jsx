@@ -83,10 +83,12 @@ export default function AdminAssign() {
             </nav>
 
             <div className="page-wide">
-                <div className="mt-2">
-                    <h1>Assign Slots</h1>
+
+                {/* Page header */}
+                <div style={{ marginTop: '2rem', marginBottom: '0.5rem' }}>
+                    <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.6rem' }}>Assign Slots</h1>
                     {ekadashi && (
-                        <p className="text-muted mt-1">
+                        <p style={{ color: 'var(--muted)', fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontStyle: 'italic', marginTop: '0.2rem' }}>
                             {ekadashi.title} · {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </p>
                     )}
@@ -94,47 +96,86 @@ export default function AdminAssign() {
 
                 <hr className="divider" />
 
-                {isLoading && <p className="text-muted">Loading signups...</p>}
+                {isLoading && (
+                    <p style={{ color: 'var(--muted)', fontStyle: 'italic', fontFamily: 'var(--font-display)', fontSize: '1.05rem' }}>
+                        Loading signups…
+                    </p>
+                )}
 
+                {/* Reference item cards */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {signups.map(item => {
                     const isOpen = expanded === item.id
                     const assigned = assignedMap[item.id] || []
 
                     return (
-                        <div className="card mt-2" key={item.id}>
-                            {/* Header row - click to expand */}
+                        <div
+                            key={item.id}
+                            className="card"
+                            style={{ padding: 0, overflow: 'hidden' }}
+                        >
+                            {/* Header – click to expand */}
                             <div
-                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+                                style={{
+                                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                    cursor: 'pointer',
+                                    padding: '1rem 1.4rem',
+                                    background: isOpen ? 'var(--cream)' : 'var(--white)',
+                                    borderBottom: (isOpen || assigned.length > 0) ? '1px solid var(--cream-dk)' : 'none',
+                                    transition: 'background 0.15s',
+                                }}
                                 onClick={() => setExpanded(isOpen ? null : item.id)}
                             >
-                                <div>
-                                    <h3>{item.title}</h3>
-                                    <p className="text-muted" style={{ fontSize: '0.82rem', marginTop: '0.2rem' }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 500 }}>
+                                            {item.title}
+                                        </h3>
+                                        {item.is_splittable && <span className="tag">Splittable</span>}
+                                        {item.is_volatile && <span className="tag tag-warm">Volatile</span>}
+                                    </div>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.15rem' }}>
                                         {item.signups.length} familiar · {assigned.length} assigned
-                                        {item.is_splittable && ' · Splittable'}
-                                        {item.is_volatile && ' · Volatile'}
                                     </p>
                                 </div>
-                                <span style={{ color: 'var(--muted)', fontSize: '1.2rem' }}>{isOpen ? '▲' : '▼'}</span>
+                                <span style={{ color: 'var(--border)', fontSize: '0.85rem', marginLeft: '1rem', flexShrink: 0 }}>
+                                    {isOpen ? '▲' : '▼'}
+                                </span>
                             </div>
 
-                            {/* Assigned people - always visible */}
+                            {/* Assigned chips – always visible when anyone is assigned */}
                             {assigned.length > 0 && (
-                                <div style={{ marginTop: '0.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                <div style={{
+                                    padding: '0.7rem 1.4rem',
+                                    display: 'flex', flexWrap: 'wrap', gap: '0.4rem',
+                                    borderBottom: isOpen ? '1px solid var(--cream-dk)' : 'none',
+                                    background: 'var(--white)',
+                                }}>
                                     {assigned.map(a => (
                                         <div key={a.id} style={{
-                                            display: 'flex', alignItems: 'center', gap: '0.4rem',
-                                            background: 'var(--saffron-lt)', border: '1px solid var(--saffron)',
-                                            borderRadius: 'var(--radius-sm)', padding: '0.3rem 0.7rem', fontSize: '0.85rem'
+                                            display: 'flex', alignItems: 'center', gap: '0.45rem',
+                                            background: 'var(--saffron-lt)',
+                                            border: '1px solid rgba(212,104,10,0.25)',
+                                            borderRadius: '100px',
+                                            padding: '0.25rem 0.6rem 0.25rem 0.75rem',
+                                            fontSize: '0.82rem',
                                         }}>
                                             <span style={{ fontWeight: 500, color: 'var(--saffron-dk)' }}>
                                                 {a.registrations?.first_name} {a.registrations?.last_name}
                                             </span>
-                                            {a.slot_detail && <span style={{ color: 'var(--muted)' }}>— {a.slot_detail}</span>}
+                                            {a.slot_detail && (
+                                                <span style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>· {a.slot_detail}</span>
+                                            )}
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); unassign.mutate(a.id) }}
-                                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '0.9rem', padding: '0' }}
-                                            >✕</button>
+                                                style={{
+                                                    background: 'none', border: 'none', cursor: 'pointer',
+                                                    color: 'rgba(158,76,7,0.5)', fontSize: '0.82rem',
+                                                    padding: '0', lineHeight: 1, display: 'flex', alignItems: 'center',
+                                                }}
+                                            >
+                                                ✕
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
@@ -142,15 +183,15 @@ export default function AdminAssign() {
 
                             {/* Expanded section */}
                             {isOpen && (
-                                <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+                                <div style={{ padding: '1rem 1.4rem 1.25rem', background: 'var(--cream)' }}>
 
-                                    {/* Slot detail input for splittable items */}
+                                    {/* Splittable slot selector */}
                                     {item.is_splittable && (
-                                        <div style={{ marginBottom: '1rem' }}>
-                                            <label style={{ fontSize: '0.82rem', color: 'var(--muted)', marginBottom: '0.4rem', display: 'block' }}>
-                                                Select slot then click a person to assign
-                                            </label>
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.5rem' }}>
+                                        <div style={{ marginBottom: '1.1rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
+                                            <p style={{ fontSize: '0.72rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.5rem' }}>
+                                                Select slot, then click a name to assign
+                                            </p>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.6rem' }}>
                                                 {(item.split_config?.chunks || []).map(chunk => (
                                                     <button
                                                         key={chunk}
@@ -163,8 +204,8 @@ export default function AdminAssign() {
                                             </div>
                                             <input
                                                 type="text"
-                                                placeholder="Or type a custom slot"
-                                                style={{ maxWidth: '280px' }}
+                                                placeholder="Or type a custom slot…"
+                                                style={{ maxWidth: '280px', fontSize: '0.85rem' }}
                                                 value={slotDetails[item.id] || ''}
                                                 onChange={e => setSlotDetails(prev => ({ ...prev, [item.id]: e.target.value }))}
                                             />
@@ -172,10 +213,13 @@ export default function AdminAssign() {
                                     )}
 
                                     {item.signups.length === 0 && (
-                                        <p className="text-muted" style={{ fontSize: '0.85rem' }}>No one signed up for this item.</p>
+                                        <p style={{ color: 'var(--muted)', fontSize: '0.88rem', fontStyle: 'italic', fontFamily: 'var(--font-display)' }}>
+                                            No one signed up for this item.
+                                        </p>
                                     )}
 
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    {/* Person rows */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                                         {item.signups.map(person => {
                                             const otherFamiliar = (familiarMap[person.registration_id] || []).filter(t => t !== item.title)
                                             const alreadyAssigned = personAssignedMap[person.registration_id] || []
@@ -184,9 +228,12 @@ export default function AdminAssign() {
                                             return (
                                                 <div key={person.registration_id} style={{
                                                     display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-                                                    padding: '0.6rem 0.8rem', background: 'var(--cream)', borderRadius: 'var(--radius-sm)'
+                                                    padding: '0.7rem 0.9rem',
+                                                    background: 'var(--white)',
+                                                    borderRadius: 'var(--radius-sm)',
+                                                    border: '1px solid var(--border)',
                                                 }}>
-                                                    <div>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
                                                         <p style={{ fontWeight: 500, fontSize: '0.92rem' }}>{person.name}</p>
                                                         {person.song_request && (
                                                             <p style={{ fontSize: '0.78rem', color: 'var(--saffron-dk)', marginTop: '0.15rem', fontStyle: 'italic' }}>
@@ -194,31 +241,33 @@ export default function AdminAssign() {
                                                             </p>
                                                         )}
                                                         {otherFamiliar.length > 0 && (
-                                                            <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: '0.15rem' }}>
+                                                            <p style={{ fontSize: '0.76rem', color: 'var(--muted)', marginTop: '0.15rem' }}>
                                                                 familiar with: {otherFamiliar.join(', ')}
                                                             </p>
                                                         )}
                                                         {alreadyAssigned.length > 0 && (
-                                                            <p style={{ fontSize: '0.78rem', color: 'var(--saffron-dk)', marginTop: '0.1rem' }}>
-                                                                already assigned: {alreadyAssigned.join(', ')}
+                                                            <p style={{ fontSize: '0.76rem', color: 'var(--saffron-dk)', marginTop: '0.1rem' }}>
+                                                                assigned: {alreadyAssigned.join(', ')}
                                                             </p>
                                                         )}
                                                     </div>
-                                                    {isAssignedToThis && !item.is_splittable ? (
-                                                        <span style={{ fontSize: '0.8rem', color: 'var(--success)' }}>✓ Assigned</span>
-                                                    ) : (
-                                                        <button
-                                                            className="btn btn-primary btn-sm"
-                                                            onClick={() => assign.mutate({
-                                                                refItemId: item.id,
-                                                                regId: person.registration_id,
-                                                                detail: item.is_splittable ? slotDetails[item.id] : null,
-                                                                isSplittable: item.is_splittable
-                                                            })}
-                                                        >
-                                                            + Assign
-                                                        </button>
-                                                    )}
+                                                    <div style={{ flexShrink: 0, marginLeft: '1rem', paddingTop: '0.1rem' }}>
+                                                        {isAssignedToThis && !item.is_splittable ? (
+                                                            <span style={{ fontSize: '0.78rem', color: 'var(--success)', fontWeight: 500 }}>✓ Assigned</span>
+                                                        ) : (
+                                                            <button
+                                                                className="btn btn-primary btn-sm"
+                                                                onClick={() => assign.mutate({
+                                                                    refItemId: item.id,
+                                                                    regId: person.registration_id,
+                                                                    detail: item.is_splittable ? slotDetails[item.id] : null,
+                                                                    isSplittable: item.is_splittable
+                                                                })}
+                                                            >
+                                                                + Assign
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )
                                         })}
@@ -228,6 +277,8 @@ export default function AdminAssign() {
                         </div>
                     )
                 })}
+                </div>
+
             </div>
         </>
     )

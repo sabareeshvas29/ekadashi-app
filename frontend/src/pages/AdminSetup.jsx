@@ -39,29 +39,53 @@ function SortableItem({ item, idx, updateItem, removeItem }) {
     transition,
     display: 'grid',
     gridTemplateColumns: 'auto 1fr auto auto auto auto',
-    gap: '0.5rem',
+    gap: '0.6rem',
     alignItems: 'center',
-    padding: '0.5rem 0',
-    borderBottom: '1px solid var(--border)'
+    padding: '0.55rem 0.5rem',
+    borderBottom: '1px solid var(--cream-dk)',
+    borderRadius: '4px',
   }
+
+  const checkboxLabel = (checked, label, field) => (
+    <label style={{
+      display: 'flex', alignItems: 'center', gap: '0.3rem',
+      fontSize: '0.75rem', margin: 0, whiteSpace: 'nowrap', cursor: 'pointer',
+      color: checked ? 'var(--saffron-dk)' : 'var(--muted)',
+      fontWeight: checked ? 500 : 400,
+    }}>
+      <input
+        type="checkbox" checked={checked}
+        onChange={e => updateItem(idx, field, e.target.checked)}
+        style={{ width: 'auto', accentColor: 'var(--saffron)', cursor: 'pointer' }}
+      />
+      {label}
+    </label>
+  )
 
   return (
     <div ref={setNodeRef} style={style}>
-      <span {...attributes} {...listeners} style={{ cursor: 'grab', color: 'var(--muted)', padding: '0 0.3rem' }}>⠿</span>
-      <input value={item.title} onChange={e => updateItem(idx, 'title', e.target.value)} placeholder="Item title" />
-      <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.82rem', margin: 0, whiteSpace: 'nowrap' }}>
-        <input type="checkbox" checked={item.is_volatile} onChange={e => updateItem(idx, 'is_volatile', e.target.checked)} style={{ width: 'auto' }} />
-        Volatile
-      </label>
-      <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.82rem', margin: 0, whiteSpace: 'nowrap' }}>
-        <input type="checkbox" checked={item.is_splittable} onChange={e => updateItem(idx, 'is_splittable', e.target.checked)} style={{ width: 'auto' }} />
-        Splittable
-      </label>
-      <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.82rem', margin: 0, whiteSpace: 'nowrap' }}>
-        <input type="checkbox" checked={item.is_song_request} onChange={e => updateItem(idx, 'is_song_request', e.target.checked)} style={{ width: 'auto' }} />
-        Song request
-      </label>
-      <button className="btn btn-ghost btn-sm" style={{ color: 'var(--error)' }} onClick={() => removeItem(idx)}>✕</button>
+      <span
+        {...attributes} {...listeners}
+        style={{ cursor: 'grab', color: 'var(--border)', padding: '0 0.25rem', fontSize: '1rem', lineHeight: 1 }}
+      >
+        ⠿
+      </span>
+      <input
+        value={item.title}
+        onChange={e => updateItem(idx, 'title', e.target.value)}
+        placeholder="Item title"
+        style={{ fontSize: '0.88rem' }}
+      />
+      {checkboxLabel(item.is_volatile,     'Volatile',     'is_volatile')}
+      {checkboxLabel(item.is_splittable,   'Splittable',   'is_splittable')}
+      {checkboxLabel(item.is_song_request, 'Song req.',    'is_song_request')}
+      <button
+        className="btn btn-ghost btn-sm"
+        style={{ color: 'var(--error)', border: 'none', padding: '0.2rem 0.4rem', minWidth: 0 }}
+        onClick={() => removeItem(idx)}
+      >
+        ✕
+      </button>
     </div>
   )
 }
@@ -128,15 +152,24 @@ export default function AdminSetup() {
       </nav>
 
       <div className="page">
-        <h1 className="mt-2">New Ekadashi Session</h1>
-        <p className="text-muted mt-1">Set up the event details and reference guide.</p>
-        <hr className="divider" />
 
+        <div style={{ marginTop: '2rem', marginBottom: '1.5rem' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.6rem' }}>New Ekadashi Session</h1>
+          <p style={{ color: 'var(--muted)', fontSize: '1rem', fontStyle: 'italic', fontFamily: 'var(--font-display)', marginTop: '0.25rem' }}>
+            Set up the event details and reference guide.
+          </p>
+        </div>
+
+        <hr className="divider" style={{ marginTop: 0 }} />
+
+        {/* Event Details card */}
         <div className="card">
-          <h3>Event Details</h3>
-          <div className="field mt-2">
+          <p style={{ fontSize: '0.68rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '1.1rem' }}>
+            Event Details
+          </p>
+          <div className="field">
             <label>Title</label>
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Event name" />
+            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Ashadha Ekadashi Bhajane" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
             <div className="field"><label>Date</label><input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
@@ -145,14 +178,20 @@ export default function AdminSetup() {
           </div>
         </div>
 
+        {/* Reference Guide card */}
         <div className="card mt-2">
-          <div className="flex justify-between items-center">
-            <h3>Reference Guide</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+            <div>
+              <p style={{ fontSize: '0.68rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+                Reference Guide
+              </p>
+              <p style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.2rem' }}>
+                Drag to reorder · Volatile items change each Ekadashi
+              </p>
+            </div>
             <button className="btn btn-ghost btn-sm" onClick={addItem}>+ Add Item</button>
           </div>
-          <p className="text-muted mt-1" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-            Pre-filled with the standard template. Check volatile for items that change each Ekadashi.
-          </p>
+
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={items.map((_, i) => i.toString())} strategy={verticalListSortingStrategy}>
               {items.map((item, idx) => (
@@ -162,11 +201,19 @@ export default function AdminSetup() {
           </DndContext>
         </div>
 
-        {error && <p style={{ color: 'var(--error)', marginTop: '0.75rem' }}>{error}</p>}
+        {error && (
+          <p style={{ color: 'var(--error)', marginTop: '0.75rem', fontSize: '0.88rem' }}>{error}</p>
+        )}
 
-        <button className="btn btn-primary mt-2" style={{ width: '100%', padding: '0.8rem' }} onClick={save} disabled={saving}>
-          {saving ? 'Creating...' : 'Create Ekadashi & Start Assigning'}
+        <button
+          className="btn btn-primary mt-2"
+          style={{ width: '100%', padding: '0.82rem', letterSpacing: '0.04em', fontSize: '0.9rem' }}
+          onClick={save}
+          disabled={saving}
+        >
+          {saving ? 'Creating…' : 'Create Ekadashi & Start Assigning'}
         </button>
+
       </div>
     </>
   )

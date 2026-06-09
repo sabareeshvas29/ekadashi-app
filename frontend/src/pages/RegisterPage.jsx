@@ -42,62 +42,116 @@ export default function RegisterPage() {
     }
   }
 
-  if (isLoading) return <div className="loading">Loading...</div>
+  if (isLoading) return <div className="loading">Loading…</div>
   if (!ekadashi) return <div className="loading">Session not found.</div>
+
   if (!ekadashi.is_registration_open) return (
-    <div className="page text-center" style={{ paddingTop: '4rem' }}>
-      <h2>Registration is closed</h2>
-      <p className="text-muted mt-1">Please contact the organizers for more information.</p>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ textAlign: 'center', maxWidth: '380px' }}>
+        <div style={{ width: '40px', height: '2px', background: 'var(--border)', margin: '0 auto 1.5rem' }} />
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.9rem', color: 'var(--charcoal)' }}>
+          Registration is closed
+        </h2>
+        <p style={{ color: 'var(--muted)', marginTop: '0.75rem', fontSize: '0.92rem' }}>
+          Please contact the organizers for more information.
+        </p>
+      </div>
     </div>
   )
 
   if (submitted) return (
-    <div className="page text-center" style={{ paddingTop: '4rem' }}>
-      <h1> Thank you!</h1>
-      <p className="text-muted mt-2">Your registration has been received. We look forward to the Bhajane.</p>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ textAlign: 'center', maxWidth: '420px' }}>
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', color: 'var(--saffron)', letterSpacing: '0.06em', fontStyle: 'italic', marginBottom: '0.75rem' }}>
+          ॥ Hare Sreenivasa ॥
+        </p>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.8rem', color: 'var(--charcoal)', letterSpacing: '-0.01em' }}>
+          Thank you
+        </h1>
+        <div style={{ width: '40px', height: '2px', background: 'var(--saffron)', margin: '1rem auto' }} />
+        <p style={{ color: 'var(--muted)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+          Your registration has been received.<br />We look forward to the Bhajane.
+        </p>
+      </div>
     </div>
   )
 
   return (
-    <div className="page" style={{ maxWidth: '640px' }}>
-      <div className="text-center mt-2" style={{ marginBottom: '2rem' }}>
-        <h1>॥ Hare Sreenivasa॥</h1>
-        <h2 style={{ marginTop: '0.5rem' }}>{ekadashi.title}</h2>
-        <p className="text-muted mt-1">
+    <div style={{
+      maxWidth: '600px', margin: '0 auto', padding: '0 1.5rem 4rem',
+      background: 'radial-gradient(ellipse at 50% 0%, rgba(212,104,10,0.05) 0%, transparent 55%), var(--cream)',
+      minHeight: '100vh',
+    }}>
+
+      {/* Ceremonial header */}
+      <div style={{ textAlign: 'center', paddingTop: '3.5rem', paddingBottom: '2.5rem' }}>
+        <p style={{
+          fontFamily: 'var(--font-display)', fontSize: '1.05rem', color: 'var(--saffron)',
+          letterSpacing: '0.06em', fontStyle: 'italic', marginBottom: '0.9rem',
+        }}>
+          ॥ Hare Sreenivasa ॥
+        </p>
+        <h1 style={{
+          fontFamily: 'var(--font-display)', fontSize: '2.6rem', fontWeight: 500,
+          color: 'var(--charcoal)', letterSpacing: '-0.01em', lineHeight: 1.15,
+        }}>
+          {ekadashi.title}
+        </h1>
+        {/* Ornamental divider */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.9rem', margin: '1.1rem 0 0.9rem' }}>
+          <div style={{ width: '48px', height: '1px', background: 'var(--border)' }} />
+          <span style={{ color: 'var(--saffron)', fontSize: '0.7rem', lineHeight: 1 }}>✦</span>
+          <div style={{ width: '48px', height: '1px', background: 'var(--border)' }} />
+        </div>
+        <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
           {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
           {' · '}{ekadashi.start_time} – {ekadashi.end_time} CST
         </p>
       </div>
 
-      <div className="card">
-        <h3>Your Details</h3>
-        <div className="mt-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+      {/* Your Details */}
+      <div className="card" style={{ boxShadow: 'var(--shadow-md)' }}>
+        <p style={{ fontSize: '0.68rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '1.1rem' }}>
+          Your Details
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
           <div className="field">
-            <label>First Name *</label>
+            <label>First Name <span style={{ color: 'var(--saffron)' }}>*</span></label>
             <input value={form.first_name} onChange={e => setForm(p => ({ ...p, first_name: e.target.value }))} placeholder="Enter here" />
           </div>
           <div className="field">
-            <label>Last Name *</label>
+            <label>Last Name <span style={{ color: 'var(--saffron)' }}>*</span></label>
             <input value={form.last_name} onChange={e => setForm(p => ({ ...p, last_name: e.target.value }))} placeholder="Enter here" />
           </div>
         </div>
-        <div className="field">
-          <label>Phone</label>
-          <input value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="Optional" />
+        <div className="field" style={{ marginBottom: 0 }}>
+          <label>Phone <span style={{ color: 'var(--border)' }}>· optional</span></label>
+          <input value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="Your number" />
         </div>
       </div>
 
-      <div className="card mt-2">
-        <h3>What are you familiar with?</h3>
-        <p className="text-muted mt-1" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+      {/* Reference items */}
+      <div className="card mt-2" style={{ boxShadow: 'var(--shadow-md)' }}>
+        <p style={{ fontSize: '0.68rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '0.3rem' }}>
+          What are you familiar with?
+        </p>
+        <p style={{ color: 'var(--muted)', fontSize: '0.84rem', marginBottom: '1.1rem', lineHeight: 1.5 }}>
           Select everything you know and are comfortable performing.
         </p>
-        {ekadashi.reference_items?.map(item => (
-          <div key={item.id} style={{ padding: '0.6rem 0', borderBottom: '1px solid var(--border)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.92rem' }}>{item.title}</span>
+
+        {ekadashi.reference_items?.map((item, idx) => (
+          <div
+            key={item.id}
+            style={{
+              padding: '0.65rem 0',
+              borderBottom: idx < ekadashi.reference_items.length - 1 ? '1px solid var(--cream-dk)' : 'none',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '0.92rem', color: 'var(--charcoal)', flex: 1 }}>{item.title}</span>
               <button
                 className={`btn btn-sm ${selections[item.id] ? 'btn-primary' : 'btn-ghost'}`}
+                style={{ flexShrink: 0 }}
                 onClick={() => toggleItem(item.id)}
               >
                 {selections[item.id] ? '✓ Familiar' : 'Familiar'}
@@ -105,7 +159,7 @@ export default function RegisterPage() {
             </div>
             {item.is_song_request && selections[item.id] && (
               <input
-                style={{ marginTop: '0.4rem', width: '100%', fontSize: '0.85rem' }}
+                style={{ marginTop: '0.5rem', width: '100%', fontSize: '0.85rem' }}
                 placeholder="Which song? (optional)"
                 value={songRequests[item.id] || ''}
                 onChange={e => setSongRequests(prev => ({ ...prev, [item.id]: e.target.value }))}
@@ -115,18 +169,31 @@ export default function RegisterPage() {
         ))}
       </div>
 
-      <div className="card mt-2">
-        <div className="field">
-          <label>Additional comments</label>
-          <textarea rows={3} value={form.comments} onChange={e => setForm(p => ({ ...p, comments: e.target.value }))} placeholder="Any notes for the organizers..." />
+      {/* Comments */}
+      <div className="card mt-2" style={{ boxShadow: 'var(--shadow-md)' }}>
+        <div className="field" style={{ marginBottom: 0 }}>
+          <label>Additional comments <span style={{ color: 'var(--border)' }}>· optional</span></label>
+          <textarea
+            rows={3}
+            value={form.comments}
+            onChange={e => setForm(p => ({ ...p, comments: e.target.value }))}
+            placeholder="Any notes for the organizers…"
+          />
         </div>
       </div>
 
-      {error && <p style={{ color: 'var(--error)', marginTop: '0.75rem', fontSize: '0.9rem' }}>{error}</p>}
+      {error && (
+        <p style={{ color: 'var(--error)', marginTop: '0.9rem', fontSize: '0.88rem' }}>{error}</p>
+      )}
 
-      <button className="btn btn-primary mt-2" style={{ width: '100%', padding: '0.8rem' }} onClick={submit}>
+      <button
+        className="btn btn-primary mt-2"
+        style={{ width: '100%', padding: '0.85rem', letterSpacing: '0.05em', fontSize: '0.88rem' }}
+        onClick={submit}
+      >
         Submit Registration
       </button>
+
     </div>
   )
 }
