@@ -13,7 +13,7 @@ async def get_schedule(ekadashi_id: str):
 
     assignments = db.table("assignments").select(
         "*, reference_items(id, title, section, order_index), registrations(first_name, last_name)"
-    ).eq("ekadashi_id", ekadashi_id).execute()
+    ).eq("ekadashi_id", ekadashi_id).order("slot_order").execute()
 
     grouped = {}
     for a in assignments.data:

@@ -20,6 +20,8 @@ const EDIT_INPUT_DARK = {
   borderBottom: '1px dashed rgba(0,0,0,0.25)',
 }
 
+const DEFAULT_MANGALA = 'Mangala - Girija Mami'
+
 const fmtSubtitle = (ek) =>
   `${new Date(ek.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} · ${ek.start_time} – ${ek.end_time} CST`
 
@@ -54,7 +56,7 @@ export default function AdminSchedule() {
         title: data.ekadashi.title,
         subtitle: fmtSubtitle(data.ekadashi),
         sections: data.sections.map(s => ({ ...s, slots: s.slots.map(sl => ({ ...sl })) })),
-        mangala: 'Mangala',
+        mangala: DEFAULT_MANGALA,
       })
     }
     setIsEditing(true)
@@ -63,7 +65,7 @@ export default function AdminSchedule() {
   const dTitle    = localData?.title    ?? data?.ekadashi.title ?? ''
   const dSubtitle = localData?.subtitle ?? (data ? fmtSubtitle(data.ekadashi) : '')
   const dSections = localData?.sections ?? data?.sections ?? []
-  const dMangala  = localData?.mangala  ?? 'Mangala'
+  const dMangala  = localData?.mangala  ?? DEFAULT_MANGALA
 
   const updTitle    = v => setLocalData(p => ({ ...p, title: v }))
   const updSubtitle = v => setLocalData(p => ({ ...p, subtitle: v }))

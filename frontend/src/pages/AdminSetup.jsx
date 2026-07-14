@@ -19,16 +19,16 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 
 const DEFAULT_ITEMS = [
-  { title: 'Song: dedicated to Sri Madhwacharya', section: null, is_volatile: false, is_splittable: false, is_song_request: false, order_index: 1 },
-  { title: 'Satya Jagatidu', section: null, is_volatile: false, is_splittable: false, is_song_request: false, order_index: 2 },
-  { title: 'Taratamya Bhajane: Ganapathy', section: 'Taratamya Bhajane', is_volatile: false, is_splittable: false, is_song_request: false, order_index: 3 },
-  { title: 'Taratamya Bhajane: Rudra devaru', section: 'Taratamya Bhajane', is_volatile: false, is_splittable: false, is_song_request: false, order_index: 4 },
-  { title: 'Taratamya Bhajane: Vayudevaru', section: 'Taratamya Bhajane', is_volatile: false, is_splittable: false, is_song_request: false, order_index: 5 },
-  { title: 'Taratamya Bhajane: Mahalakshmi Devi', section: 'Taratamya Bhajane', is_volatile: false, is_splittable: false, is_song_request: false, order_index: 6 },
-  { title: 'HarikathAmruthasAra - Vyapthi Sandhi', section: 'HKS', is_volatile: false, is_splittable: true, is_song_request: false, order_index: 7 },
-  { title: 'Sri Vishnu Sahasranama (Avarthanae 1)', section: 'VSN', is_volatile: false, is_splittable: true, is_song_request: false, order_index: 8 },
-  { title: 'Bhagavantha hAdu', section: 'Bhagavantha hAdu', is_volatile: true, is_splittable: false, is_song_request: true, order_index: 9 },
-  { title: 'Sri Vishnu Sahasranama (Avarthanae 2)', section: 'VSN', is_volatile: false, is_splittable: true, is_song_request: false, order_index: 10 },
+  { title: 'Song: dedicated to Sri Madhwacharya', section: null, is_splittable: false, is_song_request: true, order_index: 1 },
+  { title: 'Satya Jagatidu', section: null, is_splittable: false, is_song_request: true, order_index: 2 },
+  { title: 'Taratamya Bhajane: Ganapathy', section: 'Taratamya Bhajane', is_splittable: false, is_song_request: true, order_index: 3 },
+  { title: 'Taratamya Bhajane: Rudra devaru', section: 'Taratamya Bhajane', is_splittable: false, is_song_request: true, order_index: 4 },
+  { title: 'Taratamya Bhajane: Vayudevaru', section: 'Taratamya Bhajane', is_splittable: false, is_song_request: true, order_index: 5 },
+  { title: 'Taratamya Bhajane: Mahalakshmi Devi', section: 'Taratamya Bhajane', is_splittable: false, is_song_request: true, order_index: 6 },
+  { title: 'HarikathAmruthasAra - Vyapthi Sandhi', section: 'HKS', is_splittable: true, is_song_request: false, order_index: 7 },
+  { title: 'Sri Vishnu Sahasranama (Avarthanae 1)', section: 'VSN', is_splittable: true, is_song_request: false, order_index: 8 },
+  { title: 'Bhagavantha hAdu', section: 'Bhagavantha hAdu', is_splittable: true, is_song_request: true, order_index: 9 },
+  { title: 'Sri Vishnu Sahasranama (Avarthanae 2)', section: 'VSN', is_splittable: true, is_song_request: false, order_index: 10 },
 ]
 
 function SortableItem({ item, idx, updateItem, removeItem }) {
@@ -38,7 +38,7 @@ function SortableItem({ item, idx, updateItem, removeItem }) {
     transform: CSS.Transform.toString(transform),
     transition,
     display: 'grid',
-    gridTemplateColumns: 'auto 1fr auto auto auto auto',
+    gridTemplateColumns: 'auto 1fr auto auto auto',
     gap: '0.6rem',
     alignItems: 'center',
     padding: '0.55rem 0.5rem',
@@ -76,8 +76,7 @@ function SortableItem({ item, idx, updateItem, removeItem }) {
         placeholder="Item title"
         style={{ fontSize: '0.88rem' }}
       />
-      {checkboxLabel(item.is_volatile,     'Volatile',     'is_volatile')}
-      {checkboxLabel(item.is_splittable,   'Splittable',   'is_splittable')}
+      {checkboxLabel(item.is_splittable,   'Manual Assign',   'is_splittable')}
       {checkboxLabel(item.is_song_request, 'Song req.',    'is_song_request')}
       <button
         className="btn btn-ghost btn-sm"
@@ -118,7 +117,7 @@ export default function AdminSetup() {
 
   const addItem = () => {
     setItems(prev => [...prev, {
-      title: '', section: null, is_volatile: false, is_splittable: false, is_song_request: false, order_index: prev.length + 1
+      title: '', section: null, is_splittable: false, is_song_request: false, order_index: prev.length + 1
     }])
   }
 
@@ -186,7 +185,7 @@ export default function AdminSetup() {
                 Reference Guide
               </p>
               <p style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.2rem' }}>
-                Drag to reorder · Volatile items change each Ekadashi
+                Drag to reorder
               </p>
             </div>
             <button className="btn btn-ghost btn-sm" onClick={addItem}>+ Add Item</button>

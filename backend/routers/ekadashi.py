@@ -10,8 +10,8 @@ router = APIRouter()
 class ReferenceItemsIn(BaseModel):
     title: str
     section: Optional[str] = None
-    is_volatile: bool = False
     is_splittable: bool = False
+    is_song_request: bool = False
     split_config: Optional[dict] = None
     order_index: int
 
@@ -90,7 +90,8 @@ async def get_signups(ekadashi_id: str):
             continue
         signup_map[ref_id].append({
             "registration_id": row["registration_id"],
-            "name": f"{reg['first_name']} {reg['last_name']}"
+            "name": f"{reg['first_name']} {reg['last_name']}",
+            "song_request": row.get("song_request"),
         })
         
     items = db.table("reference_items").select("*").eq("ekadashi_id", ekadashi_id).order("order_index").execute()

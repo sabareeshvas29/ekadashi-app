@@ -12,6 +12,7 @@ class RegistrationIn(BaseModel):
     phone: Optional[str] = None
     comments: Optional[str] = None
     reference_item_ids: List[str]
+    song_requests: Optional[dict] = {}
 
 @router.post("/")
 async def to_register(payload: RegistrationIn):
@@ -36,8 +37,12 @@ async def to_register(payload: RegistrationIn):
     reg_id = reg_res.data[0]["id"]
 
     items = [
-    {"registration_id": reg_id, "reference_item_id": ref_id}
-    for ref_id in payload.reference_item_ids
+        {
+            "registration_id": reg_id,
+            "reference_item_id": ref_id,
+            "song_request": (payload.song_requests or {}).get(ref_id) or None,
+        }
+        for ref_id in payload.reference_item_ids
     ]
     if payload.reference_item_ids:
         db.table("registration_items").insert(items).execute()

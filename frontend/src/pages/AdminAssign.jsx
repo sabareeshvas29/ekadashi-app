@@ -2,12 +2,73 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/api'
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core'
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    horizontalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
+function AssignedChip({ assignment, onUnassign }) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: assignment.id })
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        display: 'flex', alignItems: 'center', gap: '0.45rem',
+        background: 'var(--saffron-lt)',
+        border: '1px solid rgba(212,104,10,0.25)',
+        borderRadius: '100px',
+        padding: '0.25rem 0.6rem 0.25rem 0.75rem',
+        fontSize: '0.82rem',
+        cursor: 'grab',
+        opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 1 : 'auto',
+    }
+
+    return (
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            <span style={{ fontWeight: 500, color: 'var(--saffron-dk)' }}>
+                {assignment.registrations?.first_name} {assignment.registrations?.last_name}
+            </span>
+            {assignment.slot_detail && (
+                <span style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>· {assignment.slot_detail}</span>
+            )}
+            <button
+                onPointerDown={e => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); onUnassign(assignment.id) }}
+                style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'rgba(158,76,7,0.5)', fontSize: '0.82rem',
+                    padding: '0', lineHeight: 1, display: 'flex', alignItems: 'center',
+                }}
+            >
+                ✕
+            </button>
+        </div>
+    )
+}
 
 export default function AdminAssign() {
     const { id } = useParams()
     const qc = useQueryClient()
     const [expanded, setExpanded] = useState(null)
     const [slotDetails, setSlotDetails] = useState({})
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    )
 
     const { data: ekadashi } = useQuery({
         queryKey: ['ekadashi', id],
@@ -25,13 +86,7 @@ export default function AdminAssign() {
     })
 
     const assign = useMutation({
-        mutationFn: async ({ refItemId, regId, detail, isSplittable }) => {
-            if (!isSplittable) {
-                const existing = assignedMap[refItemId] || []
-                for (const a of existing) {
-                    await api.delete(`/assignments/${a.id}`)
-                }
-            }
+        mutationFn: async ({ refItemId, regId, detail }) => {
             return api.post('/assignments/', {
                 ekadashi_id: id,
                 reference_item_id: refItemId,
@@ -46,6 +101,31 @@ export default function AdminAssign() {
         mutationFn: (assignmentId) => api.delete(`/assignments/${assignmentId}`),
         onSuccess: () => qc.invalidateQueries(['assignments', id])
     })
+
+    const reorder = useMutation({
+        mutationFn: (items) => api.patch('/assignments/reorder', { items }),
+        onSuccess: () => qc.invalidateQueries(['assignments', id])
+    })
+
+    const handleChipDragEnd = (currentAssigned) => (event) => {
+        const { active, over } = event
+        if (!over || active.id === over.id) return
+
+        const oldIndex = currentAssigned.findIndex(a => a.id === active.id)
+        const newIndex = currentAssigned.findIndex(a => a.id === over.id)
+        if (oldIndex === -1 || newIndex === -1) return
+
+        const reordered = arrayMove(currentAssigned, oldIndex, newIndex)
+
+        qc.setQueryData(['assignments', id], (old = []) =>
+            old.map(a => {
+                const idx = reordered.findIndex(r => r.id === a.id)
+                return idx === -1 ? a : { ...a, slot_order: idx }
+            })
+        )
+
+        reorder.mutate(reordered.map((a, i) => ({ assignment_id: a.id, slot_order: i })))
+    }
 
     // Build map: registration_id -> list of reference titles they know
     const familiarMap = {}
@@ -131,8 +211,7 @@ export default function AdminAssign() {
                                         <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 500 }}>
                                             {item.title}
                                         </h3>
-                                        {item.is_splittable && <span className="tag">Splittable</span>}
-                                        {item.is_volatile && <span className="tag tag-warm">Volatile</span>}
+                                        {item.is_splittable && <span className="tag">Manual Assign</span>}
                                     </div>
                                     <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.15rem' }}>
                                         {item.signups.length} familiar · {assigned.length} assigned
@@ -151,33 +230,17 @@ export default function AdminAssign() {
                                     borderBottom: isOpen ? '1px solid var(--cream-dk)' : 'none',
                                     background: 'var(--white)',
                                 }}>
-                                    {assigned.map(a => (
-                                        <div key={a.id} style={{
-                                            display: 'flex', alignItems: 'center', gap: '0.45rem',
-                                            background: 'var(--saffron-lt)',
-                                            border: '1px solid rgba(212,104,10,0.25)',
-                                            borderRadius: '100px',
-                                            padding: '0.25rem 0.6rem 0.25rem 0.75rem',
-                                            fontSize: '0.82rem',
-                                        }}>
-                                            <span style={{ fontWeight: 500, color: 'var(--saffron-dk)' }}>
-                                                {a.registrations?.first_name} {a.registrations?.last_name}
-                                            </span>
-                                            {a.slot_detail && (
-                                                <span style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>· {a.slot_detail}</span>
-                                            )}
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); unassign.mutate(a.id) }}
-                                                style={{
-                                                    background: 'none', border: 'none', cursor: 'pointer',
-                                                    color: 'rgba(158,76,7,0.5)', fontSize: '0.82rem',
-                                                    padding: '0', lineHeight: 1, display: 'flex', alignItems: 'center',
-                                                }}
-                                            >
-                                                ✕
-                                            </button>
-                                        </div>
-                                    ))}
+                                    <DndContext
+                                        sensors={sensors}
+                                        collisionDetection={closestCenter}
+                                        onDragEnd={handleChipDragEnd(assigned)}
+                                    >
+                                        <SortableContext items={assigned.map(a => a.id)} strategy={horizontalListSortingStrategy}>
+                                            {assigned.map(a => (
+                                                <AssignedChip key={a.id} assignment={a} onUnassign={aid => unassign.mutate(aid)} />
+                                            ))}
+                                        </SortableContext>
+                                    </DndContext>
                                 </div>
                             )}
 
@@ -257,12 +320,16 @@ export default function AdminAssign() {
                                                         ) : (
                                                             <button
                                                                 className="btn btn-primary btn-sm"
-                                                                onClick={() => assign.mutate({
-                                                                    refItemId: item.id,
-                                                                    regId: person.registration_id,
-                                                                    detail: item.is_splittable ? slotDetails[item.id] : null,
-                                                                    isSplittable: item.is_splittable
-                                                                })}
+                                                                onClick={() => assign.mutate(
+                                                                    {
+                                                                        refItemId: item.id,
+                                                                        regId: person.registration_id,
+                                                                        detail: item.is_splittable ? slotDetails[item.id] : null,
+                                                                    },
+                                                                    {
+                                                                        onSuccess: () => setSlotDetails(prev => ({ ...prev, [item.id]: '' }))
+                                                                    }
+                                                                )}
                                                             >
                                                                 + Assign
                                                             </button>
