@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const api = axios.create({ baseURL: '/api' })
+export const api = axios.create({ baseURL: 'https://ekadashi-backend.onrender.com' })
 
 api.interceptors.request.use(config => {
   const token = localStorage.getItem('ekadashi_token')
