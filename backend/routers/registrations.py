@@ -9,7 +9,7 @@ class RegistrationIn(BaseModel):
     ekadashi_id: str
     first_name: str
     last_name: str
-    phone: Optional[str] = None
+    phone: str
     comments: Optional[str] = None
     reference_item_ids: List[str]
     song_requests: Optional[dict] = {}
@@ -48,3 +48,9 @@ async def to_register(payload: RegistrationIn):
         db.table("registration_items").insert(items).execute()
 
     return {"success": True, "registration_id": reg_id}
+
+@router.get("/ekadashi/{ekadashi_id}")
+async def get_registrations(ekadashi_id: str):
+    db = get_supabase()
+    regs = db.table("registrations").select("*").eq("ekadashi_id", ekadashi_id).execute()
+    return regs.data
