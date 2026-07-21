@@ -26,8 +26,8 @@ export default function RegisterPage() {
 
   const submit = async () => {
     setError('')
-    if (!form.first_name || !form.last_name) {
-      setError('Please enter your first and last name.')
+    if (!form.first_name || !form.last_name || !form.phone) {
+      setError('Please enter your first name, last name, and phone number.')
       return
     }
     const reference_item_ids = Object.entries(selections)
@@ -126,7 +126,7 @@ export default function RegisterPage() {
           </div>
         </div>
         <div className="field" style={{ marginBottom: 0 }}>
-          <label>Phone <span style={{ color: 'var(--border)' }}>· optional</span></label>
+          <label>Phone <span style={{ color: 'var(--saffron)' }}>*</span></label>
           <input value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="Your number" />
         </div>
       </div>
