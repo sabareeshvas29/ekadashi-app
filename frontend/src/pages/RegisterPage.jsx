@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
+import { formatTime } from '../lib/formatTime'
 
 export default function RegisterPage() {
   const { ekadashiId } = useParams()
@@ -106,7 +107,7 @@ export default function RegisterPage() {
         </div>
         <p style={{ color: 'var(--muted)', fontSize: '1rem' }}>
           {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
-          {' · '}{ekadashi.start_time} – {ekadashi.end_time} CST
+          {' · '}{formatTime(ekadashi.start_time)} – {formatTime(ekadashi.end_time)} CST
         </p>
       </div>
 

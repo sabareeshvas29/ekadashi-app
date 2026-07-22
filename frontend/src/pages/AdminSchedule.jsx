@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
+import { formatTime } from '../lib/formatTime'
 
 const EDIT_INPUT = {
   background: 'transparent',
@@ -23,7 +24,7 @@ const EDIT_INPUT_DARK = {
 const DEFAULT_MANGALA = 'Mangala - Girija Mami'
 
 const fmtSubtitle = (ek) =>
-  `${new Date(ek.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })} · ${ek.start_time} – ${ek.end_time} CST`
+  `${new Date(ek.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })} · ${formatTime(ek.start_time)} – ${formatTime(ek.end_time)} CST`
 
 // Normal vs compressed style sets
 const S = {

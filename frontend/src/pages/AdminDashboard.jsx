@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
+import { formatTime } from '../lib/formatTime'
 import { useAuth } from '../hooks/useAuth'
 
 export default function AdminDashboard() {
@@ -75,7 +76,7 @@ export default function AdminDashboard() {
                   </h3>
                   <p style={{ color: 'var(--muted)', fontSize: '0.84rem', marginTop: '0.2rem' }}>
                     {new Date(session.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
-                    {' · '}{session.start_time} – {session.end_time} CST
+                    {' · '}{formatTime(session.start_time)} – {formatTime(session.end_time)} CST
                   </p>
                 </div>
                 <span className={`badge badge-${session.is_registration_open ? 'open' : 'closed'}`} style={{ flexShrink: 0, marginTop: '0.2rem' }}>
