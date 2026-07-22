@@ -46,7 +46,7 @@ export default function AdminAssign() {
                     <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '2.6rem' }}>Assign Slots</h1>
                     {ekadashi && (
                         <p style={{ color: 'var(--muted)', fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontStyle: 'italic', marginTop: '0.2rem' }}>
-                            {ekadashi.title} · {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                            {ekadashi.title} · {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' })}
                         </p>
                     )}
                 </div>

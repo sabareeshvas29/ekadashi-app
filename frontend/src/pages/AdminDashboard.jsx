@@ -74,7 +74,7 @@ export default function AdminDashboard() {
                     {session.title}
                   </h3>
                   <p style={{ color: 'var(--muted)', fontSize: '0.84rem', marginTop: '0.2rem' }}>
-                    {new Date(session.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                    {new Date(session.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
                     {' · '}{session.start_time} – {session.end_time} CST
                   </p>
                 </div>

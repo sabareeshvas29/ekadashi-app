@@ -105,7 +105,7 @@ export default function RegisterPage() {
           <div style={{ width: '48px', height: '1px', background: 'var(--border)' }} />
         </div>
         <p style={{ color: 'var(--muted)', fontSize: '1rem' }}>
-          {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+          {new Date(ekadashi.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
           {' · '}{ekadashi.start_time} – {ekadashi.end_time} CST
         </p>
       </div>
